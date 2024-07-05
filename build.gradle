@@ -25,20 +25,10 @@ buildscript {
 
 plugins {
     id 'java-library'
+    id 'maven-publish'
 }
-
-// https://github.com/vanniktech/gradle-maven-publish-plugin/issues/206
-// change domain before applying the plugin
-ext {
-    RELEASE_REPOSITORY_URL = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-    SNAPSHOT_REPOSITORY_URL = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-}
-
-apply plugin: "com.vanniktech.maven.publish"
 
 repositories {
-    mavenLocal()
-    jcenter()
     mavenCentral()
 }
 
@@ -74,9 +64,22 @@ test {
     useJUnitPlatform()
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.fork = true
+}
+
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+// 打包javadocJar任务
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
+    classifier = 'javadoc'
+    from javadoc.destinationDir
 }
 
 javadoc {
@@ -86,12 +89,25 @@ javadoc {
     }
 }
 
-// https://github.com/vanniktech/gradle-maven-publish-plugin/issues/206
-// for closeAndReleaseRepository task
-mavenPublish {
-    nexus {
-        baseUrl = "https://s01.oss.sonatype.org/service/local/"
-        repositoryUsername = mavenCentralRepositoryUsername
-        repositoryPassword = mavenCentralRepositoryPassword
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = project.groupId
+            artifactId = project.name
+            version = project.version
+
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+    repositories {
+        maven {
+            url maven_url
+            credentials {
+                username maven_username
+                password maven_password
+            }
+        }
     }
 }
