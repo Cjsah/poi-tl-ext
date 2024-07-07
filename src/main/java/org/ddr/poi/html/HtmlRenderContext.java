@@ -1281,7 +1281,7 @@ public class HtmlRenderContext extends RenderContext<String> {
                 XWPFTable xwpfTable = container.insertNewTbl(globalCursor);
                 globalCursor.pop();
                 if (dedupeParagraph != null && !numberingContext.contains(dedupeParagraph)) {
-                    if (!dedupeParagraph.equals(getRun().getParent())) {
+                    if (!dedupeParagraph.equals(getRun().getParent()) && needDedupe()) {
                         removeParagraph(container, dedupeParagraph);
                     }
                     unmarkDedupe();
@@ -1326,6 +1326,14 @@ public class HtmlRenderContext extends RenderContext<String> {
         }
 
         renderElementEnd(element, this, elementRenderer, blocked);
+    }
+
+    private boolean needDedupe() {
+        if (dedupeParagraph == null || dedupeParagraph.isEmpty()) return true;
+        for (XWPFRun run : dedupeParagraph.getRuns()) {
+            if (!"\n".equals(run.toString())) return false;
+        }
+        return true;
     }
 
     private void removeParagraph(IBody container, XWPFParagraph paragraph) {

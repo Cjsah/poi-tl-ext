@@ -32,19 +32,13 @@ class HtmlRenderPolicyTest {
     void doRender() throws IOException {
         HtmlRenderPolicy htmlRenderPolicy = new HtmlRenderPolicy();
         Configure configure = Configure.builder()
-                .bind("teachContent", htmlRenderPolicy)
-                .bind("plainContent", htmlRenderPolicy)
+                .bind("text", htmlRenderPolicy)
                 .build();
-        Map<String, Object> data = new HashMap<>(2);
-        data.put("teachContent", FileReader.readFile("/1.html"));
-        data.put("plainContent", FileReader.readFile("/2.html"));
+        Map<String, Object> data = new HashMap<>();
+        data.put("text", FileReader.readFile("/4.html"));
 
-        try (InputStream inputStream = HtmlRenderPolicyTest.class.getResourceAsStream("/notes.docx")) {
-            XWPFTemplate.compile(inputStream, configure).render(data).writeToFile("notes_out.docx");
-        }
-        // 段落内嵌入html测试
-        try (InputStream inputStream = HtmlRenderPolicyTest.class.getResourceAsStream("/poi.docx")) {
-            XWPFTemplate.compile(inputStream, configure).render(data).writeToFile("poi_out.docx");
+        try (InputStream inputStream = HtmlRenderPolicyTest.class.getResourceAsStream("/4.docx")) {
+            XWPFTemplate.compile(inputStream, configure).render(data).writeToFile("4_out.docx");
         }
     }
 
