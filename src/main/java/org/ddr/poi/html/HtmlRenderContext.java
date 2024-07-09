@@ -110,6 +110,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -1281,8 +1282,8 @@ public class HtmlRenderContext extends RenderContext<String> {
                 XWPFTable xwpfTable = container.insertNewTbl(globalCursor);
                 globalCursor.pop();
                 if (dedupeParagraph != null && !numberingContext.contains(dedupeParagraph)) {
-                    if (!dedupeParagraph.equals(getRun().getParent()) && needDedupe()) {
-                        removeParagraph(container, dedupeParagraph);
+                    if (!dedupeParagraph.equals(getRun().getParent())) {
+                        tryRemoveParagraph(container);
                     }
                     unmarkDedupe();
                 }
@@ -1328,12 +1329,24 @@ public class HtmlRenderContext extends RenderContext<String> {
         renderElementEnd(element, this, elementRenderer, blocked);
     }
 
-    private boolean needDedupe() {
-        if (dedupeParagraph == null || dedupeParagraph.isEmpty()) return true;
-        for (XWPFRun run : dedupeParagraph.getRuns()) {
-            if (!"\n".equals(run.toString())) return false;
+    private void tryRemoveParagraph(IBody container) {
+        List<XWPFRun> runs = dedupeParagraph.getRuns();
+        boolean isEmpty = true;
+
+        for (int i = runs.size(); i > 0; i--) {
+            XWPFRun run = runs.get(i - 1);
+            String text = run.text();
+            if (text.isEmpty() || "\n".equals(text)) {
+                continue;
+            }
+            isEmpty = false;
+            while (dedupeParagraph.removeRun(i));
+            break;
         }
-        return true;
+
+        if (isEmpty) {
+            this.removeParagraph(container, dedupeParagraph);
+        }
     }
 
     private void removeParagraph(IBody container, XWPFParagraph paragraph) {
