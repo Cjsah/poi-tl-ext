@@ -1283,6 +1283,7 @@ public class HtmlRenderContext extends RenderContext<String> {
                 globalCursor.pop();
                 if (dedupeParagraph != null && !numberingContext.contains(dedupeParagraph)) {
                     if (!dedupeParagraph.equals(getRun().getParent())) {
+                        // 尝试删掉上一段最后一行空行, 如果段落是空的删除段落
                         tryRemoveParagraph(container);
                     }
                     unmarkDedupe();
@@ -1331,21 +1332,19 @@ public class HtmlRenderContext extends RenderContext<String> {
 
     private void tryRemoveParagraph(IBody container) {
         List<XWPFRun> runs = dedupeParagraph.getRuns();
-        boolean isEmpty = true;
-
-        for (int i = runs.size(); i > 0; i--) {
-            XWPFRun run = runs.get(i - 1);
-            String text = run.text();
-            if (text.isEmpty() || "\n".equals(text)) {
-                continue;
-            }
-            isEmpty = false;
-            while (dedupeParagraph.removeRun(i));
-            break;
-        }
-
-        if (isEmpty) {
+        if (runs.isEmpty()) {
             this.removeParagraph(container, dedupeParagraph);
+            return;
+        }
+        int index = runs.size() - 1;
+        XWPFRun run = runs.get(index);
+        String text = run.text();
+        if (text.isEmpty() || "\n".equals(text)) {
+            if (runs.size() == 1) {
+                this.removeParagraph(container, dedupeParagraph);
+            } else {
+                dedupeParagraph.removeRun(index);
+            }
         }
     }
 
