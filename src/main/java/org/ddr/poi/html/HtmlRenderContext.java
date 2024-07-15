@@ -1237,7 +1237,7 @@ public class HtmlRenderContext extends RenderContext<String> {
         if (isElement) {
             Element element = ((Element) node);
             renderElement(element);
-        } else if (node instanceof TextNode) {
+        } else if (node instanceof TextNode && !"tr".equals(node.parent().nodeName())) {
             renderText(((TextNode) node).getWholeText());
         }
     }
