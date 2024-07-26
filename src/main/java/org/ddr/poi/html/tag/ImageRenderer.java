@@ -306,7 +306,7 @@ public class ImageRenderer implements ElementRenderer {
         int maxWidthInEMU = containerWidth;
         int maxHeightInEMU = Integer.MAX_VALUE;
 
-        String width = context.getPropertyValue(HtmlConstants.CSS_WIDTH);
+        String width = context.getPropertyValue(HtmlConstants.CSS_WIDTH, true);
         if (width.length() > 0) {
             CSSLength cssLength = CSSLength.of(width);
             if (cssLength.isValid()) {

@@ -108,6 +108,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1231,13 +1232,15 @@ public class HtmlRenderContext extends RenderContext<String> {
         }
     }
 
+    private final List<String> PERMIT_TAG = Arrays.asList("tr", "table", "tbody");
+
     public void renderNode(Node node) {
         boolean isElement = node instanceof Element;
 
         if (isElement) {
             Element element = ((Element) node);
             renderElement(element);
-        } else if (node instanceof TextNode && !"tr".equals(node.parent().nodeName())) {
+        } else if (node instanceof TextNode && !PERMIT_TAG.contains(node.parent().nodeName())) {
             renderText(((TextNode) node).getWholeText());
         }
     }
