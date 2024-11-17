@@ -677,11 +677,7 @@ public class HtmlRenderContext extends RenderContext<String> {
      */
     public int getAvailableWidthInEMU() {
         IBody container = getContainer();
-        if (container.getPartType() == BodyType.DOCUMENT) {
-            return availablePageWidth;
-        } else {
-            return RenderUtils.getAvailableWidthInEMU(container);
-        }
+        return RenderUtils.getAvailableWidthInEMU(container);
     }
 
     /**
@@ -911,7 +907,7 @@ public class HtmlRenderContext extends RenderContext<String> {
         CTRPr rPr = RenderUtils.getRPr(ctr);
 
         // 字体，如果声明了全局字体则忽略样式声明
-        String fontFamily = StringUtils.isBlank(globalFont) ? getPropertyValue(HtmlConstants.CSS_FONT_FAMILY) : globalFont;
+        String fontFamily = globalFont;
         if (StringUtils.isNotBlank(fontFamily)) {
             CTFonts ctFonts = rPr.addNewRFonts();
             // ASCII

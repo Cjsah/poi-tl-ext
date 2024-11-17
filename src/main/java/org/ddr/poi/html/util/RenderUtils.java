@@ -243,6 +243,17 @@ public class RenderUtils {
         return uList.isEmpty() ? rPr.addNewU() : uList.get(0);
     }
 
+
+    private static CTSectPr getSectPr(XWPFDocument document) {
+        for (XWPFParagraph paragraph : document.getParagraphs()) {
+            CTPPr ppr = paragraph.getCTP().getPPr();
+            if (ppr != null && ppr.getSectPr() != null) {
+                return ppr.getSectPr();
+            }
+        }
+        return document.getDocument().getBody().getSectPr();
+    }
+
     /**
      * 获取父容器的可用宽度，以EMU为单位
      *
@@ -251,8 +262,7 @@ public class RenderUtils {
      */
     public static int getAvailableWidthInEMU(IBody body) {
         if (body.getPartType() == BodyType.DOCUMENT) {
-            XWPFDocument document = (XWPFDocument) body;
-            CTSectPr sectPr = document.getDocument().getBody().getSectPr();
+            CTSectPr sectPr = getSectPr((XWPFDocument) body);
             long availableWidth = POIXMLUnits.parseLength(sectPr.getPgSz().xgetW())
                     - POIXMLUnits.parseLength(sectPr.getPgMar().xgetLeft())
                     - POIXMLUnits.parseLength(sectPr.getPgMar().xgetRight());

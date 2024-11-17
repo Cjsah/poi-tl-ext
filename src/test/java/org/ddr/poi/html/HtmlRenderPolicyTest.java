@@ -30,16 +30,36 @@ class HtmlRenderPolicyTest {
 
     @Test
     void doRender() throws IOException {
-        HtmlRenderPolicy htmlRenderPolicy = new HtmlRenderPolicy();
-        Configure configure = Configure.builder()
-                .bind("text", htmlRenderPolicy)
-                .build();
-        Map<String, Object> data = new HashMap<>();
-        data.put("text", FileReader.readFile("/4.html"));
+//        String input = "/study-template-word.docx";
+//        String output = "result2.docx";
 
-        try (InputStream inputStream = HtmlRenderPolicyTest.class.getResourceAsStream("/4.docx")) {
-            XWPFTemplate.compile(inputStream, configure).render(data).writeToFile("4_out.docx");
+        String input = "/4.docx";
+        String output = "result1.docx";
+
+
+        HtmlRenderConfig renderConfig = new HtmlRenderConfig();
+        HtmlRenderPolicy htmlRenderPolicy = new HtmlRenderPolicy(renderConfig);
+        Configure config = Configure.builder()
+                .bind("article", htmlRenderPolicy)
+                .build();
+
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("article", FileReader.readFile("/4.html"));
+
+        long start = System.currentTimeMillis();
+
+        try (
+                InputStream inputStream = HtmlRenderPolicyTest.class.getResourceAsStream(input);
+                XWPFTemplate wordTemplate = XWPFTemplate.compile(inputStream, config).render(data);
+        ) {
+            wordTemplate.writeToFile(output);
+            long end = System.currentTimeMillis();
+            System.out.println(end - start);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 
 }
