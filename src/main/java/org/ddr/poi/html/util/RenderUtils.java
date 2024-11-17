@@ -318,9 +318,9 @@ public class RenderUtils {
             paragraph.setAlignment(align);
         }
 
-        if (CSSStyleUtils.isEmpty(cssStyleDeclaration)) {
-            return;
-        }
+//        if (CSSStyleUtils.isEmpty(cssStyleDeclaration)) {
+//            return;
+//        }
 
         // border
         setBorder(paragraph, cssStyleDeclaration);
