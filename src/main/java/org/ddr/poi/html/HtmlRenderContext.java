@@ -1242,9 +1242,7 @@ public class HtmlRenderContext extends RenderContext<String> {
     }
 
     public void renderElement(Element element) {
-        if (log.isDebugEnabled()) {
-            log.info("Start rendering html tag: <{}{}>", element.normalName(), element.attributes());
-        }
+        log.debug("Start rendering html tag: <{}{}>", element.normalName(), element.attributes());
         if (element.tag().isFormListed() || element.tag().isFormSubmittable()) {
             return;
         }

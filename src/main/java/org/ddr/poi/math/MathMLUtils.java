@@ -68,9 +68,7 @@ public class MathMLUtils {
      * @param math MathML字符串
      */
     public static void renderTo(XWPFParagraph paragraph, CTR ctr, String math) {
-        if (log.isDebugEnabled()) {
-            log.info("Start rendering MathML: {}", math);
-        }
+        log.debug("Start rendering MathML: {}", math);
         try (StringReader sr = new StringReader(math);
              StringWriter sw = new StringWriter()) {
             Serializer out = newSerializer(sw);
@@ -78,9 +76,7 @@ public class MathMLUtils {
             Initializer.TRANSFORMER.transform(new StreamSource(sr), out);
 
             String omath = sw.toString();
-            if (log.isDebugEnabled()) {
-                log.info("Output OMath: {}", omath);
-            }
+            log.debug("Output OMath: {}", omath);
             addMath(paragraph, ctr, omath);
         } catch (IOException | SaxonApiException | XmlException e) {
             log.warn("Failed to render math: {}", math, e);

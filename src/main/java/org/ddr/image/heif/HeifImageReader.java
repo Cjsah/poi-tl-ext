@@ -110,9 +110,7 @@ public class HeifImageReader extends ImageReaderBase {
                 fileId = IOUtils.toString(uploadResponse, StandardCharsets.UTF_8).trim();
             }
             if (uploadResponseCode == HttpURLConnection.HTTP_OK) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Heic uploaded: {}", fileId);
-                }
+                log.debug("Heic uploaded: {}", fileId);
                 convertConnection = HttpURLConnectionUtils.connect("https://s1.heic.online/heic/");
                 convertConnection.setRequestMethod("POST");
                 convertConnection.setDoOutput(true);
@@ -129,9 +127,7 @@ public class HeifImageReader extends ImageReaderBase {
                     json = IOUtils.toString(convertResponse, StandardCharsets.UTF_8);
                 }
                 if (convertResponseCode == HttpURLConnection.HTTP_OK && json.contains("SUCCESS")) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Heic converted: {}", json);
-                    }
+                    log.debug("Heic converted: {}", json);
                     String url = "https://s1.heic.online/upload/" + fileId + "/";
                     downloadConnection = HttpURLConnectionUtils.connect(url);
                     try (InputStream downloadResponse = downloadConnection.getInputStream()) {
