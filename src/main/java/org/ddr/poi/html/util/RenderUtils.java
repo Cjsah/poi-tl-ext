@@ -366,6 +366,13 @@ public class RenderUtils {
 
         // line-height
         String lineHeight = context.getPropertyValue(HtmlConstants.CSS_LINE_HEIGHT);
+        String minLineHeight = context.getPropertyValue("min-line-height");
+        boolean isMinSize = false;
+        if (StringUtils.isBlank(lineHeight) && StringUtils.isNotBlank(minLineHeight)) {
+            lineHeight = minLineHeight;
+            isMinSize = true;
+        }
+
         if (StringUtils.isNotBlank(lineHeight)) {
             CSSLength cssLength = CSSLength.of(lineHeight);
             if (cssLength.isValid()) {
@@ -375,7 +382,7 @@ public class RenderUtils {
                     spacing.setLine(BigInteger.valueOf(Math.round(cssLength.unitValue() * SPACING_FACTOR)));
                 } else if (cssLength.getValue() > 0) {
                     CTSpacing spacing = getSpacing(paragraph);
-                    spacing.setLineRule(STLineSpacingRule.EXACT);
+                    spacing.setLineRule(isMinSize ? STLineSpacingRule.AT_LEAST : STLineSpacingRule.EXACT);
                     spacing.setLine(BigInteger.valueOf(emuToTwips(context.lengthToEMU(cssLength))));
                 }
             } else if (NumberUtils.isParsable(lineHeight)) {
