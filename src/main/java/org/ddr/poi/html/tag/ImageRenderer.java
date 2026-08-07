@@ -112,7 +112,7 @@ public class ImageRenderer implements ElementRenderer {
      */
     protected void handleData(Element element, HtmlRenderContext context, String src) {
         int index = src.indexOf(HtmlConstants.COMMA.charAt(0));
-        String data = src.substring(index + 1);
+        String data = src.substring(index + 1).replaceAll("[\r\n]", "").trim();
         String declaration = src.substring(0, index);
         String format = StringUtils.substringBetween(declaration, HtmlConstants.SLASH, HtmlConstants.SEMICOLON);
         // org.apache.poi.sl.usermodel.PictureData.PictureType
